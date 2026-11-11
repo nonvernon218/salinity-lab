@@ -1,0 +1,26 @@
+# 忽略系统与编辑器文件
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
+
+# 忽略依赖与构建产物
+node_modules/
+dist/
+build/
+
+# 忽略本地预览与临时调试文件
+_*.js
+_*.png
+_*.py
+
+# 忽略发布标记与工具生成目录
+.wbapp_*.genie
+.wbapp_*/
+.workbuddy/
+
+# 忽略本地环境配置
+.env
+.env.local
