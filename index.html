@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>盐度实验室 · 水族箱淡水与半咸水</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>🦀</text></svg>">
+<style>
+/* ============ 基础 ============ */
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",system-ui,sans-serif;
+  background:
+    radial-gradient(1200px 700px at 18% -10%, #123a5e 0%, transparent 62%),
+    radial-gradient(1000px 800px at 92% 6%, #0d3350 0%, transparent 58%),
+    linear-gradient(178deg,#071d2e 0%,#06202f 34%,#04141f 100%);
+  color:#e8f4ff;
+  min-height:100%;
+  overflow-x:hidden;
+  position:relative;
+}
+/* 背景细密气泡 / 光点 */
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    radial-gradient(circle at 12% 78%, rgba(120,220,255,.16) 0 2px, transparent 2px),
+    radial-gradient(circle at 74% 62%, rgba(120,220,255,.13) 0 1.6px, transparent 1.6px),
+    radial-gradient(circle at 38% 34%, rgba(160,235,255,.11) 0 2.2px, transparent 2.2px),
+    radial-gradient(circle at 88% 88%, rgba(120,220,255,.15) 0 1.8px, transparent 1.8px),
+    radial-gradient(circle at 56% 14%, rgba(160,235,255,.10) 0 1.4px, transparent 1.4px);
+  background-size:520px 520px,430px 430px,610px 610px,380px 380px,700px 700px;
+  animation:bgDrift 34s linear infinite;
+}
+@keyframes bgDrift{to{background-position:520px -520px,-430px -430px,610px 610px,380px -380px,-700px 700px}}
+
+.wrap{position:relative;z-index:2;max-width:1720px;margin:0 auto;padding:22px 28px 14px}
+
+/* ============ 页头 ============ */
+header.hd{display:flex;align-items:flex-end;justify-content:space-between;gap:26px;margin-bottom:16px;flex-wrap:wrap}
+.hd .left h1{
+  font-size:37px;font-weight:800;letter-spacing:.5px;line-height:1.14;
+  background:linear-gradient(96deg,#dff4ff 0%,#8fd8ff 42%,#5fe0c8 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:0 0 42px rgba(90,200,255,.28);
+}
+.hd .left p{margin-top:9px;font-size:15.5px;color:#8fb4cc;letter-spacing:.4px;font-weight:400}
+.hd .left p b{color:#7fe3d0;font-weight:600}
+.pill{
+  display:inline-flex;align-items:center;gap:8px;padding:7px 15px;border-radius:999px;
+  background:rgba(90,200,255,.1);border:1px solid rgba(120,215,255,.26);
+  font-size:13.5px;color:#a9d8ef;letter-spacing:.5px;white-space:nowrap;
+}
+.pill i{width:7px;height:7px;border-radius:50%;background:#4fe0b8;box-shadow:0 0 10px #4fe0b8;animation:pulse 2.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.82)}}
+
+/* ============ 主布局 ============ */
+.stage{display:grid;grid-template-columns:246px minmax(0,1fr) 372px;gap:22px;align-items:stretch;
+  height:calc(100vh - 165px);min-height:540px}
+
+/* ---- 左：素材托盘 ---- */
+.tray{
+  background:linear-gradient(172deg,rgba(20,62,90,.88),rgba(9,36,54,.92));
+  border:1px solid rgba(110,200,240,.2);border-radius:20px;padding:16px 14px 18px;
+  box-shadow:0 22px 48px -20px rgba(0,0,0,.72), inset 0 1px 0 rgba(160,225,255,.12);
+  backdrop-filter:blur(6px);
+}
+.tray h2{
+  font-size:13px;font-weight:700;color:#7fb6d2;letter-spacing:1.6px;
+  text-transform:uppercase;margin-bottom:4px;padding-left:2px;
+}
+.tray .hint{font-size:12px;color:#5d8ba6;margin-bottom:13px;padding-left:2px;letter-spacing:.3px}
+.items{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tray{display:flex;flex-direction:column;overflow:auto}
+.items{flex:1 1 auto;align-content:start}
+/* 托盘中部的教学小提示，填满下方空间 */
+.trayfoot{
+  margin-top:14px;padding:14px 12px;border-radius:14px;
+  background:linear-gradient(170deg,rgba(40,100,135,.28),rgba(12,44,64,.42));
+  border:1px solid rgba(110,200,240,.16);
+}
+.trayfoot .tf-t{
+  font-size:11.5px;font-weight:700;color:#7fd8c8;letter-spacing:1.1px;margin-bottom:5px;
+}
+.trayfoot .tf-b{font-size:11.5px;line-height:1.75;color:#7ea6bc;letter-spacing:.2px}
+.item{
+  position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  height:88px;border-radius:14px;cursor:grab;user-select:none;
+  background:linear-gradient(168deg,rgba(38,94,128,.66),rgba(16,52,74,.78));
+  border:1px solid rgba(120,205,245,.2);
+  transition:transform .2s cubic-bezier(.2,.9,.3,1.3), box-shadow .2s, border-color .2s, opacity .25s;
+  touch-action:none;
+}
+.item:hover{transform:translateY(-3px) scale(1.035);border-color:rgba(140,230,255,.5);box-shadow:0 12px 26px -10px rgba(0,180,255,.5)}
+.item:active{cursor:grabbing;transform:scale(.96)}
+.item .ic{width:52px;height:46px;display:grid;place-items:center;pointer-events:none}
+.item .ic svg{width:100%;height:100%;overflow:visible}
+.item span{font-size:11.5px;color:#9ac8dd;letter-spacing:.5px;pointer-events:none}
+/* 被拖出后托盘里的图变暗 */
+.item.used{opacity:.34;filter:saturate(.4)}
+.item.used span{color:#5a8399}
+.item .badge{
+  position:absolute;top:6px;right:7px;font-size:10px;color:#0a2a3d;font-weight:800;
+  background:#5fe0c8;border-radius:999px;padding:1px 6px;letter-spacing:0;
+}
+
+/* ---- 中：水族箱 ---- */
+.tankcol{position:relative;display:flex;flex-direction:column;min-height:0}
+.tankframe{
+  position:relative;border-radius:24px;overflow:hidden;flex:0 0 auto;
+  border:1px solid rgba(130,215,255,.26);
+  box-shadow:0 34px 76px -26px rgba(0,0,0,.85), inset 0 1px 0 rgba(170,230,255,.2);
+  background:#03131f;
+}
+#tank{display:block;touch-action:none;cursor:default;max-width:100%}
+/* 水箱底部说明条 */
+.tankbar{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  margin-top:10px;padding:0 4px;flex-wrap:wrap;flex:0 0 auto;min-height:22px;
+}
+.tankbar .tip{font-size:12.5px;color:#6f9db6;letter-spacing:.3px}
+.tankbar .tip b{color:#8fd8ff}
+
+/* ---- 右：控制台 ---- */
+.panel{display:flex;flex-direction:column;gap:16px}
+.card{
+  background:linear-gradient(172deg,rgba(20,62,90,.86),rgba(9,34,51,.92));
+  border:1px solid rgba(110,200,240,.2);border-radius:20px;padding:18px;
+  box-shadow:0 22px 48px -20px rgba(0,0,0,.72), inset 0 1px 0 rgba(160,225,255,.12);
+  backdrop-filter:blur(6px);
+}
+.card .lab{font-size:12px;color:#78a9c4;letter-spacing:1.5px;font-weight:700;margin-bottom:12px}
+
+/* 盐度大数字 */
+.readout{display:flex;align-items:flex-end;gap:10px}
+.readout .num{
+  font-size:72px;font-weight:800;line-height:.92;letter-spacing:-3px;
+  font-variant-numeric:tabular-nums;
+  background:linear-gradient(170deg,#f0fbff,#8fd8ff);-webkit-background-clip:text;background-clip:text;color:transparent;
+  transition:filter .4s;
+}
+.readout .unit{font-size:20px;font-weight:700;color:#79b8d8;padding-bottom:9px}
+.readout .gl{margin-left:auto;font-size:13.5px;color:#7aa8c0;padding-bottom:11px;font-variant-numeric:tabular-nums}
+.readout .gl b{color:#a9e6ff;font-weight:700;font-size:15px}
+.saltname{
+  margin-top:10px;font-size:13.5px;letter-spacing:.4px;color:#88b6cd;
+  display:flex;align-items:center;gap:8px;
+}
+.saltname .dot{width:8px;height:8px;border-radius:50%;background:#5fb8e0;box-shadow:0 0 9px currentColor}
+
+/* 状态印章 */
+.verdict{
+  margin-top:14px;display:flex;align-items:center;gap:13px;
+  padding:14px 15px;border-radius:15px;border:1px solid transparent;
+  transition:background .45s, border-color .45s, box-shadow .45s;
+}
+.verdict .vt{font-size:21px;font-weight:800;letter-spacing:.4px;line-height:1.15}
+.verdict .vs{font-size:12.5px;opacity:.78;margin-top:3px;letter-spacing:.3px}
+.verdict .em{font-size:30px;line-height:1;filter:drop-shadow(0 3px 8px rgba(0,0,0,.5))}
+.v-fresh{background:rgba(88,150,190,.15);border-color:rgba(120,190,230,.28)}
+.v-fresh .vt{color:#9fd0ea}
+.v-brack{background:rgba(80,200,180,.14);border-color:rgba(95,224,200,.4)}
+.v-brack .vt{color:#5fe0c8}
+.v-good{background:rgba(60,225,170,.16);border-color:rgba(80,240,190,.55);box-shadow:0 0 30px -6px rgba(60,230,170,.4)}
+.v-good .vt{color:#6dedc0}
+.v-high{background:rgba(255,182,90,.14);border-color:rgba(255,190,100,.38)}
+.v-high .vt{color:#ffc37a}
+.v-die{background:rgba(255,90,110,.13);border-color:rgba(255,120,140,.36)}
+.v-die .vt{color:#ff8b9e}
+
+/* 刻度条 */
+.gauge{margin-top:6px;position:relative;padding-top:26px}
+.g-track{
+  position:relative;height:26px;border-radius:9px;overflow:visible;
+  background:linear-gradient(90deg,#0b3a52,#0d4560);
+  box-shadow:inset 0 2px 6px rgba(0,0,0,.6);
+}
+.g-zone{position:absolute;top:0;bottom:0;border-radius:0;overflow:hidden;z-index:1}
+.g-zone::after{
+  content:"";position:absolute;inset:0;
+  background:repeating-linear-gradient(135deg,transparent 0 5px,rgba(255,255,255,.05) 5px 9px);
+}
+.g-zone:first-child{border-radius:9px 0 0 9px}
+.g-zone:last-of-type{border-radius:0 9px 9px 0}
+.g-zone.zf{background:linear-gradient(180deg,rgba(120,175,210,.72),rgba(90,140,175,.42))}
+.g-zone.zb{background:linear-gradient(180deg,rgba(95,224,200,.78),rgba(70,175,160,.4))}
+.g-zone.zg{background:linear-gradient(180deg,rgba(85,245,195,.88),rgba(50,195,155,.45))}
+.g-zone.zs{background:linear-gradient(180deg,rgba(255,160,95,.72),rgba(210,120,60,.36))}
+.g-zone.zd{background:linear-gradient(180deg,rgba(255,95,120,.72),rgba(200,60,85,.34))}
+.g-tick{position:absolute;top:0;bottom:0;width:1.5px;background:rgba(255,255,255,.55);z-index:2}
+.g-tick::after{
+  content:attr(data-l);position:absolute;top:-19px;left:50%;transform:translateX(-50%);
+  font-size:11px;color:#8fc0d8;white-space:nowrap;font-variant-numeric:tabular-nums;letter-spacing:0;
+}
+.g-tick.major::after{color:#c4e6f8;font-weight:700}
+.g-needle{
+  position:absolute;top:-9px;width:3px;height:44px;border-radius:2px;z-index:6;
+  background:linear-gradient(180deg,#fff,#8fe8ff);
+  box-shadow:0 0 14px rgba(150,240,255,.95),0 0 30px rgba(80,220,255,.6);
+  transform:translateX(-50%);transition:left .12s linear;
+  pointer-events:none;
+}
+.g-needle::before{
+  content:"";position:absolute;top:-6px;left:50%;transform:translateX(-50%);
+  border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #e8faff;
+}
+
+/* 滑块 */
+.sliderbox{margin-top:20px;padding:0 13px}
+.sl-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px;margin-left:-13px;margin-right:-13px}
+.sl-head span{font-size:13px;color:#8fbcd4;letter-spacing:.4px}
+.sl-head em{font-style:normal;font-size:12px;color:#5f8ca6}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:10px;border-radius:99px;outline:none;
+  background:linear-gradient(90deg,#3d8fb8 0%,#3d8fb8 var(--p,0%),#0c3145 var(--p,0%),#0c3145 100%);
+  cursor:pointer;box-shadow:inset 0 1px 4px rgba(0,0,0,.55);
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:26px;height:26px;border-radius:50%;
+  background:radial-gradient(circle at 34% 30%,#ffffff,#8fdcff 55%,#3d9fd0);
+  border:2px solid rgba(255,255,255,.85);
+  box-shadow:0 0 0 4px rgba(110,215,255,.16),0 6px 14px rgba(0,0,0,.5);
+  cursor:grab;transition:transform .16s, box-shadow .16s;
+}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.13);box-shadow:0 0 0 7px rgba(110,215,255,.22),0 8px 18px rgba(0,0,0,.55)}
+input[type=range]::-webkit-slider-thumb:active{cursor:grabbing;transform:scale(1.06)}
+input[type=range]::-moz-range-thumb{
+  width:24px;height:24px;border-radius:50%;background:#a8e4ff;border:2px solid #fff;
+  box-shadow:0 0 0 4px rgba(110,215,255,.16);cursor:grab;
+}
+
+/* 提示小卡 */
+.note{
+  font-size:12.5px;line-height:1.85;color:#7ea9c0;letter-spacing:.25px;
+  border-left:2px solid rgba(95,224,200,.42);padding-left:12px;
+}
+.note b{color:#8fe3cf;font-weight:600}
+.note .kb{
+  display:inline-block;padding:0 5px;border-radius:4px;background:rgba(140,220,255,.14);
+  color:#a9e6ff;font-size:11.5px;font-weight:700;
+}
+/* 存活率曲线 */
+.curve{margin-top:14px;position:relative;height:74px}
+.curve svg{width:100%;height:100%;overflow:visible;display:block}
+.curveleg{display:flex;gap:14px;margin-top:8px;font-size:11px;color:#7ba4bb;letter-spacing:.3px}
+.curveleg span{display:flex;align-items:center;gap:5px}
+.curveleg i{width:9px;height:9px;border-radius:2px;display:inline-block}
+
+/* 重置按钮 */
+.btn{
+  width:100%;padding:12px;border-radius:13px;border:1px solid rgba(120,205,245,.26);
+  background:rgba(28,80,110,.5);color:#9dd3ea;font-size:13.5px;font-weight:600;
+  letter-spacing:1px;cursor:pointer;transition:.2s;font-family:inherit;
+}
+.btn:hover{background:rgba(45,120,160,.55);color:#d6f2ff;border-color:rgba(140,230,255,.5)}
+.btn:active{transform:scale(.98)}
+
+/* 拖拽幽灵 */
+#ghost{position:fixed;z-index:9999;pointer-events:none;width:64px;height:64px;opacity:0;transform:translate(-50%,-50%) scale(.7);transition:opacity .12s}
+#ghost.on{opacity:.92;transform:translate(-50%,-50%) scale(1)}
+#ghost svg{width:100%;height:100%;filter:drop-shadow(0 8px 14px rgba(0,0,0,.55))}
+
+footer{margin-top:10px;text-align:center;font-size:11.5px;color:#456f88;letter-spacing:.6px;line-height:1.2}
+
+@media (max-width:1450px){
+  .stage{grid-template-columns:210px minmax(0,1fr) 330px;gap:16px;height:calc(100vh - 148px);min-height:470px}
+  .hd .left h1{font-size:31px}
+  .readout .num{font-size:60px}
+  .trayfoot{padding:11px 10px}
+  .card{padding:15px}
+  .panel{gap:12px}
+  .gauge{margin-top:2px;padding-top:22px}
+  .sliderbox{margin-top:14px}
+  .note{font-size:12px;line-height:1.72}
+  .curve{height:62px}
+  .verdict{padding:11px 13px;margin-top:11px}
+  .verdict .vt{font-size:19px}
+  .saltname{margin-top:7px}
+  .btn{padding:10px}
+  .item{height:78px}
+}
+@media (max-width:1180px){
+  .stage{grid-template-columns:1fr}
+  .items{grid-template-columns:repeat(4,1fr)}
+  .item{height:76px}
+}
+/* 矮屏（1366×768 等投影/笔记本）压缩页头与留白，避免出现滚动条 */
+@media (max-height:800px){
+  .wrap{padding:14px 24px 8px}
+  header.hd{margin-bottom:12px}
+  .hd .left h1{font-size:29px}
+  .hd .left p{margin-top:6px;font-size:14px}
+  .stage{height:calc(100vh - 128px);min-height:420px}
+  footer{margin-top:6px;font-size:11px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hd">
+    <div class="left">
+      <h1>盐度实验室</h1>
+      <p>拖动物品布置水族箱 · 拖动滑块改变水中含盐量 · 观察<b>小螃蟹能不能孵化出来</b></p>
+    </div>
+    <div class="pill"><i></i>实时监测中</div>
+  </header>
+
+  <div class="stage">
+    <!-- ============ 左：素材托盘 ============ -->
+    <aside class="tray">
+      <h2>布置素材</h2>
+      <div class="hint">拖到右边的水族箱里</div>
+      <div class="items" id="items"></div>
+      <div class="trayfoot">
+        <div class="tf-t">摆放小技巧</div>
+        <div class="tf-b">石头、水草、贝壳、沉木要贴着砂床放；小鱼和气泡可以留在水中自由游动。</div>
+        <div class="tf-t" style="margin-top:12px">想挪走？</div>
+        <div class="tf-b">把水族箱里的东西拖回上方素材区，它就收回来了。</div>
+      </div>
+    </aside>
+
+    <!-- ============ 中：水族箱 ============ -->
+    <section class="tankcol">
+      <div class="tankframe">
+        <canvas id="tank"></canvas>
+      </div>
+      <div class="tankbar">
+        <div class="tip">水越咸，水的颜色和密度都会跟着变 —— 注意看气泡上浮的<b>快慢</b>和水面的<b>浮力</b></div>
+        <div class="tip">已放置：<b id="cnt">0</b> 件</div>
+      </div>
+    </section>
+
+    <!-- ============ 右：控制台 ============ -->
+    <aside class="panel">
+      <div class="card">
+        <div class="lab">当前盐度</div>
+        <div class="readout">
+          <div class="num" id="num">0.0</div>
+          <div class="unit">‰</div>
+          <div class="gl"><b id="gl">0.0</b> g/L</div>
+        </div>
+        <div class="saltname"><span class="dot" id="saltdot"></span><span id="saltname">淡水</span></div>
+
+        <div class="verdict v-fresh" id="verdict">
+          <div class="em" id="vem">🚫</div>
+          <div>
+            <div class="vt" id="vt">无法孵化</div>
+            <div class="vs" id="vs">盐度太低，蟹苗的卵无法正常发育</div>
+          </div>
+        </div>
+
+        <div class="gauge">
+          <div class="g-track" id="gtrack">
+            <div class="g-needle" id="needle" style="left:0%"></div>
+          </div>
+        </div>
+
+        <div class="sliderbox">
+          <div class="sl-head"><span>往水里加盐</span><em id="slval">0.0 ‰</em></div>
+          <input type="range" id="salt" min="0" max="35" step="0.5" value="0">
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="lab">为什么</div>
+        <div class="note">
+          中华绒螯蟹（大闸蟹）的<b>溞状幼体</b>必须在<b>半咸水</b>中才能发育：<br>
+          <span class="kb">8‰</span> 以上才开始孵化，<span class="kb">13‰–26‰</span> 最理想。<br>
+          内湖淡水盐度通常不到 <span class="kb">0.5‰</span>，所以蟹苗得从通江湖泊引进来。
+        </div>
+        <div class="curve" id="curve"></div>
+        <div class="curveleg">
+          <span><i style="background:#5fefc0"></i>能发育</span>
+          <span><i style="background:#ffc37a"></i>勉强</span>
+          <span><i style="background:#ff8b9e"></i>不行</span>
+        </div>
+      </div>
+
+      <button class="btn" id="reset">重置水族箱与盐度</button>
+    </aside>
+  </div>
+
+  <footer>数据参考：中华绒螯蟹溞状幼体适盐 8‰–33‰，最适 13‰–26‰</footer>
+</div>
+
+<div id="ghost"></div>
+<script src="app.js"></script>
+</body>
+</html>
