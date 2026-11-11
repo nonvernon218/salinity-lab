@@ -4,7 +4,7 @@
 
 零依赖纯静态站点，无需构建、无需联网即可运行。
 
-![预览](效果预览.png)
+![预览](preview.png)
 
 ## 功能
 
@@ -47,7 +47,7 @@ node build.js
 ├── assets/
 │   ├── crab_out.png            成体素材（透明底）
 │   └── crabling_out.png        幼体素材（透明底）
-└── 效果预览.png                 页面截图
+└── preview.png                 页面截图
 ```
 
 ## 技术说明
